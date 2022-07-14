@@ -160,7 +160,8 @@ else:
             dmatrix = xgb.DMatrix(X_test, y_test)
         return booster.predict(dmatrix)
 
-
+params.box_filter_measurements=10
+params.time_limit=60000
 fit_time, booster = bench.measure_function_time(
     fit, None if params.count_dmatrix else dtrain, params=params)
 train_metric = metric_func(
@@ -169,6 +170,8 @@ train_metric = metric_func(
         params.objective),
     y_train)
 
+params.box_filter_measurements=10
+params.time_limit=60000
 predict_time, y_pred = bench.measure_function_time(
     predict, None if params.inplace_predict or params.count_dmatrix else dtest, params=params)
 test_metric = metric_func(convert_xgb_predictions(y_pred, params.objective), y_test)

@@ -1,0 +1,37 @@
+{
+    "common": {
+        "lib": "xgboost",
+        "data-format": "pandas",
+        "data-order": "F",
+        "dtype": "float32",
+        "algorithm": "gbt",
+        "tree-method": "hist",
+        "count-dmatrix": "",
+	    "num-threads": 80
+    },
+    "cases": [
+       {
+            "dataset": [
+                {
+                    "source": "npy",
+                    "name": "santander",
+                    "training": {
+                        "x": "data/santander_x_train.npy",
+                        "y": "data/santander_y_train.npy"
+                    },
+                    "testing": {
+                        "x": "data/santander_1000x_tile_x_test.npy",
+                        "y": "data/santander_1000x_tile_y_test.npy"
+                    }
+                }
+            ],
+            "n-estimators": 10000,
+            "objective": "binary:logistic",
+            "max-depth": 1,
+            "subsample": 0.5,
+            "eta": 0.1,
+            "colsample-bytree": 0.05,
+            "single-precision-histogram": ""
+      }
+   ]
+}
