@@ -47,6 +47,7 @@ X_train, X_test, y_train, y_test = bench.load_data(params)
 
 n_classes = len(np.unique(y_train))
 
+print(f"Running with XGBoost {xgb.__version__}")
 print(f"\nn_classes = {n_classes}\n")
 
 # load saved model
