@@ -161,7 +161,7 @@ def fit(dmatrix):
 # os.system('vtune -command resume')
 
 booster = fit(None)
-booster.save_model("xgb-higgs1m-icx.model")
+booster.save_model("xgb-airline-ohe.model")
 
 # if params.inplace_predict:
 #     def predict(*args):
