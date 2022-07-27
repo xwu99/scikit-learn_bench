@@ -89,7 +89,7 @@ params = bench.parse_args(parser)
 if params.seed == 12345:
     params.seed = 0
 
-print(f"Running {params.dataset_name} with XGBoost {xgb.__version__}")
+print(f"Running {params.dataset_name} with XGBoost {xgb.__version__} using {params.threads} threads")
 
 t0 = timeit.default_timer()
 # Load and convert data
