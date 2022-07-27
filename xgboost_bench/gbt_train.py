@@ -156,12 +156,21 @@ def fit(dmatrix):
     print("Data loading took " + str(t1 - t0) + " secs")
     return xgb.train(xgb_params, dmatrix, params.n_estimators)
 
+def fit_sklearn():
+    model = xgb.XGBClassifier(**xgb_params)
+    model.fit(X_train, y_train)
+    model.save_model("xgb-higgs1m-model.json")
+
+    # model.predict(X_test)
+
 # print("vtune resuming ...")
 # import os
 # os.system('vtune -command resume')
 
-booster = fit(None)
-booster.save_model("xgb-airline-ohe.model")
+fit_sklearn()
+
+# booster = fit(None)
+# booster.save_model("xgb-airline-ohe.model")
 
 # if params.inplace_predict:
 #     def predict(*args):

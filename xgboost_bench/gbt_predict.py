@@ -44,16 +44,19 @@ params = bench.parse_args(parser)
 
 # Load and convert data
 X_train, X_test, y_train, y_test = bench.load_data(params)
-
 n_classes = len(np.unique(y_train))
 
 print(f"Running with XGBoost {xgb.__version__}")
-print(f"\nn_classes = {n_classes}\n")
+print("X_train shape:", X_train.shape, "X_test shape:", X_test.shape)
+print(f"n_classes = {n_classes}\n")
 
 # load saved model
 print(f"Loading {params.model_file} ...")
 booster = xgb.Booster()
 booster.load_model(params.model_file)
+
+classifier = xgb.XGBClassifier()
+classifier.load_model("xgb-higgs1m-model.json")
 
 # For multi-class
 def convert_probs_to_classes(y_prob):
@@ -96,6 +99,22 @@ def predict_onedal():
     # print(daal_prediction.prediction)
     return (daal_prediction.probabilities[:,1], np.ravel(daal_prediction.prediction))
 
+def predict_hummingbird():
+    import hummingbird.ml
+
+    t0 = timeit.default_timer()
+    hummingbird_model = hummingbird.ml.convert(classifier, "tvm", X_test)
+    t1 = timeit.default_timer()
+    print(f"--- Convert to Hummingbird model took {t1-t0:.3f} secs")
+
+    t0 = timeit.default_timer()
+    class_prediction = hummingbird_model.predict(X_test)
+    t1 = timeit.default_timer()
+    print(f"--- Predict with Hummingbird model took {t1-t0:.3f} secs")
+
+    return (None, class_prediction)
+
+
 def run_predict_xgb():
     t0 = timeit.default_timer()
     (prob_prediction, class_prediction) = predict(None)
@@ -115,7 +134,18 @@ def run_predict_onedal():
     # print("\ndaal4py errors count:", daal_errors_count)
     # print("\nGround truth (first 10 rows):\n", y_test[0:10])
 
-print("")
-run_predict_xgb()
-print("")
-run_predict_onedal()
+def run_predict_hummingbird():
+    t0 = timeit.default_timer()
+    (_, class_prediction) = predict_hummingbird()
+    t1 = timeit.default_timer()
+
+    print(f"Predict using Hummingbird Predictor took {t1-t0:.3f} secs")
+    # print(f"Hummingbird prob_prediction results (first 10 rows): \n{prob_prediction[0:10]}\n")
+    print(f"Hummingbird prediction results (first 10 rows): \n{class_prediction[0:10]}\n")
+
+# print("")
+# run_predict_xgb()
+# print("")
+# run_predict_onedal()
+# print("")
+run_predict_hummingbird()
