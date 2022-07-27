@@ -89,10 +89,14 @@ params = bench.parse_args(parser)
 if params.seed == 12345:
     params.seed = 0
 
-# print(f"Running with XGBoost {xgb.__version__}")
+print(f"Running {params.dataset_name} with XGBoost {xgb.__version__}")
 
+t0 = timeit.default_timer()
 # Load and convert data
 X_train, X_test, y_train, y_test = bench.load_data(params)
+t1 = timeit.default_timer()
+print("Loading and converting data took " + str(t1 - t0) + " secs")
+
 n_classes = len(np.unique(y_train))
 
 xgb_params = {

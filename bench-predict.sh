@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-source /home/xiaochang/miniconda3/bin/activate xgb15_conda_default
+source /home/xiaochang/miniconda3/bin/activate xgb15-conda-default
 
 export PYTHONPATH=${PWD}
-NUM_THREADS=112
+NUM_THREADS=$(nproc)
 
 # python -W ignore xgboost_bench/gbt_predict_optimized.py --arch mlp-sdp-spr-7639 --data-format pandas --data-order F --dtype float32 --tree-method hist --count-dmatrix --num-threads 112 --learning-rate 0.03 --max-depth 6 --n-estimators 1000 --objective reg:squarederror --device none --file-X-train data/abalone_x_train.npy --file-y-train data/abalone_y_train.npy --file-X-test data/abalone_x_test.npy --file-y-test data/abalone_y_test.npy --dataset-name abalone
 

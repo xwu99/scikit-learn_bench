@@ -20,6 +20,7 @@ import bench
 import numpy as np
 import xgboost as xgb
 import time
+import timeit
 
 
 def convert_probs_to_classes(y_prob):
@@ -89,8 +90,11 @@ params = bench.parse_args(parser)
 if params.seed == 12345:
     params.seed = 0
 
+t0 = timeit.default_timer()
 # Load and convert data
 X_train, X_test, y_train, y_test = bench.load_data(params)
+t1 = timeit.default_timer()
+print("Loading and converting data took " + str(t1 - t0) + " secs")
 
 xgb_params = {
     'booster': 'gbtree',
@@ -145,14 +149,13 @@ dtrain = xgb.DMatrix(X_train, y_train)
 dtest = xgb.DMatrix(X_test, y_test)
 
 def fit(dmatrix):
-    print("Start ...")
-    import timeit
+    print("Fit start ...")
     t0 = timeit.default_timer()
     if dmatrix is None:
         dmatrix = xgb.DMatrix(X_train, y_train)
     # time.sleep(3)
     t1 = timeit.default_timer()
-    print("Data loading took " + str(t1 - t0) + " secs")
+    print("DMatrix loading took " + str(t1 - t0) + " secs")
     return xgb.train(xgb_params, dmatrix, params.n_estimators)
 
 def fit_sklearn():

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source /home/xiaochang/miniconda3/bin/activate xgb15_conda_default
+source /home/xiaochang/miniconda3/bin/activate xgb15-conda-default
 
 export PYTHONPATH=${PWD}
 
