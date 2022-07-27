@@ -89,6 +89,8 @@ params = bench.parse_args(parser)
 if params.seed == 12345:
     params.seed = 0
 
+# print(f"Running with XGBoost {xgb.__version__}")
+
 # Load and convert data
 X_train, X_test, y_train, y_test = bench.load_data(params)
 n_classes = len(np.unique(y_train))
