@@ -94,6 +94,8 @@ print(f"Running {params.dataset_name} with XGBoost {xgb.__version__} using {para
 t0 = timeit.default_timer()
 # Load and convert data
 X_train, X_test, y_train, y_test = bench.load_data(params)
+X_npy = X_test.to_numpy()
+
 t1 = timeit.default_timer()
 print("Loading and converting data took " + str(t1 - t0) + " secs")
 
@@ -207,12 +209,15 @@ def predict_hummingbird():
     import hummingbird.ml
 
     t0 = timeit.default_timer()
-    hummingbird_model = hummingbird.ml.convert(classifier, "tvm", X_test)
+    # hummingbird_model = hummingbird.ml.convert(classifier, "pytorch")
+    # tvm backend should use npy format for sample input?
+    hummingbird_model = hummingbird.ml.convert(classifier, "tvm", X_npy)
+
     t1 = timeit.default_timer()
     print(f"--- Convert to Hummingbird model took {t1-t0:.3f} secs")
 
     t0 = timeit.default_timer()
-    class_prediction = hummingbird_model.predict(X_test)
+    class_prediction = hummingbird_model.predict(X_npy)
     t1 = timeit.default_timer()
     print(f"--- Predict with Hummingbird model took {t1-t0:.3f} secs")
 

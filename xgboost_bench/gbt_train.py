@@ -159,9 +159,21 @@ def fit():
     model.save_model(f"xgb-{params.dataset_name}-model.json")
 
 def fit_sklearn():
-    model = xgb.XGBClassifier(**xgb_params)
-    model.fit(X_train, y_train)
-    model.save_model(f"xgb-skl-{params.dataset_name}-model.json")
+    import hummingbird.ml
+    # model = xgb.XGBClassifier(**xgb_params)
+    num_classes = 2
+    X = np.random.rand(100000, 28)
+    y = np.random.randint(num_classes, size=100000)
+    model = xgb.XGBClassifier()
+
+
+    # print(X)
+    # print(X_train, y_train)
+    m = model.fit(X_train, y_train)
+    print(m)
+    hummingbird_model = hummingbird.ml.convert(m, "pytorch", X_test[0:1])
+
+    # model.save_model(f"xgb-skl-{params.dataset_name}-model.json")
 
 # print("vtune resuming ...")
 # import os

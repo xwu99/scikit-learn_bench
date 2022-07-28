@@ -16,3 +16,6 @@ data
 # Results
 results*.json
 *.xlsx
+
+advisor_*
+0_results/
