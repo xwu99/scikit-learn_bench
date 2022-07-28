@@ -191,14 +191,14 @@ params.time_limit=60000
 predict_time, y_pred = bench.measure_function_time(
     predict, None if params.inplace_predict or params.count_dmatrix else dtest, params=params)
 # test_metric = metric_func(convert_xgb_predictions(y_pred, params.objective), y_test)
-print(f"{params.dataset_name} vanilla predict time: {predict_time}")
+print(f"{params.dataset_name} vanilla predict time: {predict_time:.3f} secs")
 
 params.box_filter_measurements=10
 params.time_limit=60000
 predict_time, y_pred = bench.measure_function_time(
     predict_onedal, None if params.inplace_predict or params.count_dmatrix else dtest, params=params)
 # test_metric = metric_func(convert_xgb_predictions(y_pred, params.objective), y_test)
-print(f"{params.dataset_name} oneDAL GBT predict time: {predict_time}")
+print(f"{params.dataset_name} oneDAL GBT predict time: {predict_time:.3f} secs")
 
 # # bench.print_output(library='xgboost', algorithm=f'gradient_boosted_trees_{task}',
 # #                    stages=['training', 'prediction'],
