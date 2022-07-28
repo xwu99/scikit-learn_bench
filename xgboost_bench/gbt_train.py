@@ -149,7 +149,7 @@ dtrain = xgb.DMatrix(X_train, y_train)
 dtest = xgb.DMatrix(X_test, y_test)
 
 def fit(dmatrix):
-    print("Fit start ...")
+    print("Training start ...")
     t0 = timeit.default_timer()
     if dmatrix is None:
         dmatrix = xgb.DMatrix(X_train, y_train)
