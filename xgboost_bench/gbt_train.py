@@ -148,26 +148,24 @@ else:
 dtrain = xgb.DMatrix(X_train, y_train)
 dtest = xgb.DMatrix(X_test, y_test)
 
-def fit(dmatrix):
+def fit():
     print("Training start ...")
     t0 = timeit.default_timer()
-    if dmatrix is None:
-        dmatrix = xgb.DMatrix(X_train, y_train)
+    dmatrix = xgb.DMatrix(X_train, y_train)
     # time.sleep(3)
     t1 = timeit.default_timer()
     print("DMatrix loading took " + str(t1 - t0) + " secs")
-    return xgb.train(xgb_params, dmatrix, params.n_estimators)
+    model = xgb.train(xgb_params, dmatrix, params.n_estimators)
+    model.save_model(f"xgb-{params.dataset_name}-model.json")
 
 def fit_sklearn():
     model = xgb.XGBClassifier(**xgb_params)
     model.fit(X_train, y_train)
-    model.save_model("xgb-higgs1m-model.json")
+    model.save_model(f"xgb-skl-{params.dataset_name}-model.json")
 
 # print("vtune resuming ...")
 # import os
 # os.system('vtune -command resume')
 
-# fit_sklearn()
-
-booster = fit(None)
-booster.save_model(f"xgb-{params.dataset_name}-model.json")
+# fit()
+fit_sklearn()
