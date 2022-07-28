@@ -2,7 +2,7 @@
 
 # source /home/xiaochang/miniconda3/bin/activate xgb15-conda-default
 # source /home/xiaochang/miniconda3/bin/activate xgb12
-source /home/xiaochang/miniconda3/bin/activate xgb-daal4py
+source /home/xiaochang/miniconda3/bin/activate xgb-predict-opt
 
 export PYTHONPATH=${PWD}
 NUM_THREADS=$(nproc)
