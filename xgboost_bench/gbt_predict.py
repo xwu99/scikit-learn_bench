@@ -42,21 +42,28 @@ parser.add_argument('--model-file', type=str, required=True,
 
 params = bench.parse_args(parser)
 
+print(f"Running {params.dataset_name} with XGBoost {xgb.__version__} using {params.threads} threads ...\n")
+
+t0 = timeit.default_timer()
 # Load and convert data
 X_train, X_test, y_train, y_test = bench.load_data(params)
-n_classes = len(np.unique(y_train))
+t1 = timeit.default_timer()
+print(f"Loading and converting data took {t1 - t0:.3f} secs")
+print(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
 
-print(f"Running with XGBoost {xgb.__version__}")
-print("X_train shape:", X_train.shape, "X_test shape:", X_test.shape)
+n_classes = len(np.unique(y_train))
 print(f"n_classes = {n_classes}\n")
 
+t0 = timeit.default_timer()
 # load saved model
-print(f"Loading {params.model_file} ...")
+print(f"Loading model {params.model_file} ...")
 booster = xgb.Booster()
 booster.load_model(params.model_file)
+t1 = timeit.default_timer()
+print(f"Loading model took {t1 - t0:.3f} secs\n")
 
 classifier = xgb.XGBClassifier()
-classifier.load_model("xgb-higgs1m-model.json")
+classifier.load_model(params.model_file)
 
 # For multi-class
 def convert_probs_to_classes(y_prob):
@@ -92,7 +99,7 @@ def predict_onedal():
     )
     daal_prediction = daal_predict_algo.compute(X_test, daal_model)
     t1 = timeit.default_timer()
-    print(f"--- Predict with oneDAL GBT model took {t1-t0:.3f} secs")
+    print(f"--- Predict with oneDAL GBT model took {t1-t0:.3f} secs\n")
     # daal_errors_count = np.count_nonzero(np.ravel(daal_prediction.prediction) - y_test)
     # print(daal_prediction.probabilities[0:20])
     # print(daal_prediction.probabilities[:,1])
@@ -116,6 +123,8 @@ def predict_hummingbird():
 
 
 def run_predict_xgb():
+    print("Start run_predict_xgb ...")
+
     t0 = timeit.default_timer()
     (prob_prediction, class_prediction) = predict(None)
     t1 = timeit.default_timer()
@@ -125,16 +134,20 @@ def run_predict_xgb():
     # print("XGBoost errors count:", xgb_errors_count)
 
 def run_predict_onedal():
+    print("Start run_predict_onedal ...")
+
     t0 = timeit.default_timer()
     (prob_prediction, class_prediction) = predict_onedal()
     t1 = timeit.default_timer()
-    print(f"Predict using oneDAL GBT Predictor took {t1-t0:.3f} secs")
+    print(f"Predict using oneDAL GBT Predictor took {t1-t0:.3f} secs\n")
     print(f"oneDAL prob_prediction results (first 10 rows): \n{prob_prediction[0:10]}\n")
     print(f"oneDAL prediction results (first 10 rows): \n{class_prediction[0:10]}\n")
     # print("\ndaal4py errors count:", daal_errors_count)
     # print("\nGround truth (first 10 rows):\n", y_test[0:10])
 
 def run_predict_hummingbird():
+    print("Start run_predict_hummingbird ...")
+
     t0 = timeit.default_timer()
     (_, class_prediction) = predict_hummingbird()
     t1 = timeit.default_timer()
@@ -143,9 +156,7 @@ def run_predict_hummingbird():
     # print(f"Hummingbird prob_prediction results (first 10 rows): \n{prob_prediction[0:10]}\n")
     print(f"Hummingbird prediction results (first 10 rows): \n{class_prediction[0:10]}\n")
 
-# print("")
+
 # run_predict_xgb()
-# print("")
-# run_predict_onedal()
-# print("")
-run_predict_hummingbird()
+run_predict_onedal()
+# run_predict_hummingbird()

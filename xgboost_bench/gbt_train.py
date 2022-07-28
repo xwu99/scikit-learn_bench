@@ -20,6 +20,7 @@ import bench
 import numpy as np
 import xgboost as xgb
 import time
+import timeit
 
 
 def convert_probs_to_classes(y_prob):
@@ -89,8 +90,11 @@ params = bench.parse_args(parser)
 if params.seed == 12345:
     params.seed = 0
 
+t0 = timeit.default_timer()
 # Load and convert data
 X_train, X_test, y_train, y_test = bench.load_data(params)
+t1 = timeit.default_timer()
+print("Loading and converting data took " + str(t1 - t0) + " secs")
 
 xgb_params = {
     'booster': 'gbtree',
@@ -144,16 +148,14 @@ else:
 dtrain = xgb.DMatrix(X_train, y_train)
 dtest = xgb.DMatrix(X_test, y_test)
 
-
 def fit(dmatrix):
-    print("Start ...")
-    import timeit
+    print("Training start ...")
     t0 = timeit.default_timer()
     if dmatrix is None:
         dmatrix = xgb.DMatrix(X_train, y_train)
     # time.sleep(3)
     t1 = timeit.default_timer()
-    print("Data loading took " + str(t1 - t0) + " secs")
+    print("DMatrix loading took " + str(t1 - t0) + " secs")
     return xgb.train(xgb_params, dmatrix, params.n_estimators)
 
 def fit_sklearn():
@@ -161,46 +163,11 @@ def fit_sklearn():
     model.fit(X_train, y_train)
     model.save_model("xgb-higgs1m-model.json")
 
-    # model.predict(X_test)
-
 # print("vtune resuming ...")
 # import os
 # os.system('vtune -command resume')
 
-fit_sklearn()
+# fit_sklearn()
 
-# booster = fit(None)
-# booster.save_model("xgb-airline-ohe.model")
-
-# if params.inplace_predict:
-#     def predict(*args):
-#         return booster.inplace_predict(np.ascontiguousarray(X_test.values,
-#                                                             dtype=np.float32))
-# else:
-#     def predict(dmatrix):  # type: ignore
-#         if dmatrix is None:
-#             dmatrix = xgb.DMatrix(X_test, y_test)
-#         return booster.predict(dmatrix)
-
-# params.box_filter_measurements=10
-# params.time_limit=60000
-# fit_time, booster = bench.measure_function_time(
-#     fit, None if params.count_dmatrix else dtrain, params=params)
-# train_metric = metric_func(
-#     convert_xgb_predictions(
-#         booster.predict(dtrain),
-#         params.objective),
-#     y_train)
-
-# params.box_filter_measurements=10
-# params.time_limit=60000
-# predict_time, y_pred = bench.measure_function_time(
-#     predict, None if params.inplace_predict or params.count_dmatrix else dtest, params=params)
-# test_metric = metric_func(convert_xgb_predictions(y_pred, params.objective), y_test)
-
-# bench.print_output(library='xgboost', algorithm=f'gradient_boosted_trees_{task}',
-#                    stages=['training', 'prediction'],
-#                    params=params, functions=['gbt.fit', 'gbt.predict'],
-#                    times=[fit_time, predict_time], metric_type=metric_name,
-#                    metrics=[train_metric, test_metric], data=[X_train, X_test],
-#                    alg_instance=booster, alg_params=xgb_params)
+booster = fit(None)
+booster.save_model(f"xgb-{params.dataset_name}-model.json")
