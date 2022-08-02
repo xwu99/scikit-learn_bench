@@ -23,19 +23,6 @@ def gen_scaled_dataset_tile(dataset_name, scale_factor):
     np.save(f"data/{scaled_dataset_name}_x_test.npy", data_x_scaled)
     np.save(f"data/{scaled_dataset_name}_y_test.npy", data_y_scaled)
 
-
-
-# gen_scaled_dataset_tile("higgs1m", 100)
-# gen_scaled_dataset_tile("letters", 1000)
-# gen_scaled_dataset_tile("mortgage1Q", 10)
-# gen_scaled_dataset_tile("plasticc", 100)
-
-# gen_scaled_dataset_tile("abalone", 160000)
 gen_scaled_dataset_tile("airline-ohe", 10)
-# gen_scaled_dataset_tile("mlsr", 3)
-# gen_scaled_dataset_tile("santander", 200)
-
-
-
-
-
+gen_scaled_dataset_tile("higgs1m", 100)
+gen_scaled_dataset_tile("mlsr", 3)
