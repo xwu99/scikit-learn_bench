@@ -25,11 +25,11 @@ def convert_probs_to_classes(y_prob):
     return np.array([np.argmax(y_prob[i]) for i in range(y_prob.shape[0])])
 
 
-def convert_xgb_predictions(y_pred, objective):
+def convert_xgb_predictions(y_pred, objective, threshold=0.5):
     if objective == 'multi:softprob':
         y_pred = convert_probs_to_classes(y_pred)
     elif objective == 'binary:logistic':
-        y_pred = y_pred.astype(np.int32)
+        y_pred = (y_pred > threshold).astype(np.int32)
     return y_pred
 
 
