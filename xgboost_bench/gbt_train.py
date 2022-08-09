@@ -146,7 +146,7 @@ else:
         xgb_params['num_class'] = params.n_classes
 
 def fit():
-    print(f"Training start with {params.threads} threads ...")
+    print(f"{params.dataset_name} training start with {params.threads} threads ...")
     print(f"Data format: {params.data_format}_{params.data_order}")
     t0 = timeit.default_timer()
     dtrain = xgb.DMatrix(X_train, y_train)

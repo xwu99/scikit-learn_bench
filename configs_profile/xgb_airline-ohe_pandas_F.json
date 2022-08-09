@@ -7,7 +7,7 @@
         "algorithm": "gbt",
         "tree-method": "hist",
         "count-dmatrix": "",
-        "num-threads": 72
+        "num-threads": 112
     },
     "cases": [
         {
