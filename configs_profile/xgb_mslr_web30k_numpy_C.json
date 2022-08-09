@@ -1,13 +1,13 @@
 {
     "common": {
         "lib": "xgboost",
-        "data-format": "pandas",
-        "data-order": "F",
+        "data-format": "numpy",
+        "data-order": "C",
         "dtype": "float32",
         "algorithm": "gbt",
         "tree-method": "hist",
         "count-dmatrix": "",
-        "num-threads": 72
+        "num-threads": 112
     },
     "cases": [
         {
