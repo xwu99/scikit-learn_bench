@@ -145,39 +145,21 @@ else:
     if params.n_classes > 2:
         xgb_params['num_class'] = params.n_classes
 
-dtrain = xgb.DMatrix(X_train, y_train)
-dtest = xgb.DMatrix(X_test, y_test)
-
 def fit():
-    print("Training start ...")
+    print(f"Training start with {params.threads} threads ...")
+    print(f"Data format: {params.data_format}_{params.data_order}")
     t0 = timeit.default_timer()
-    dmatrix = xgb.DMatrix(X_train, y_train)
-    # time.sleep(3)
+    dtrain = xgb.DMatrix(X_train, y_train)
     t1 = timeit.default_timer()
     print("DMatrix loading took " + str(t1 - t0) + " secs")
-    model = xgb.train(xgb_params, dmatrix, params.n_estimators)
-    model.save_model(f"xgb-{params.dataset_name}-model.json")
-
-def fit_sklearn():
-    import hummingbird.ml
-    # model = xgb.XGBClassifier(**xgb_params)
-    num_classes = 2
-    X = np.random.rand(100000, 28)
-    y = np.random.randint(num_classes, size=100000)
-    model = xgb.XGBClassifier()
-
-
-    # print(X)
-    # print(X_train, y_train)
-    m = model.fit(X_train, y_train)
-    print(m)
-    hummingbird_model = hummingbird.ml.convert(m, "pytorch", X_test[0:1])
-
-    # model.save_model(f"xgb-skl-{params.dataset_name}-model.json")
+    t0 = timeit.default_timer()
+    model = xgb.train(xgb_params, dtrain, params.n_estimators)
+    t1 = timeit.default_timer()
+    print("XGB Training took " + str(t1 - t0) + " secs")
+    # model.save_model(f"xgb-{params.dataset_name}-model.json")
 
 # print("vtune resuming ...")
 # import os
 # os.system('vtune -command resume')
 
-# fit()
-fit_sklearn()
+fit()

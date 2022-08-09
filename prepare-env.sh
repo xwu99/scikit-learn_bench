@@ -1,4 +1,4 @@
-ENV_NAME=xgb15_conda_default
-conda create -n $ENV_NAME python=3.9
+ENV_NAME=xgb15-conda-default
+conda create -y -n $ENV_NAME python=3.9
 source /home/xiaochang/miniconda3/bin/activate $ENV_NAME
-conda install requests scikit-learn pandas xgboost tqdm openpyxl
+conda install -y numpy pandas scikit-learn requests xgboost tqdm openpyxl
