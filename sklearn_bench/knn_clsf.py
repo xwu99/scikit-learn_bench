@@ -46,6 +46,14 @@ def main():
 
     # Measure time and accuracy on prediction
     if params.task == 'classification':
+        if params.threads != params.test_threads:
+            test_threads = params.test_threads
+            if test_threads == -1:
+                test_threads = bench.DEFAULT_NUM_THREADS
+            import daal4py
+            daal4py.daalinit(test_threads)
+            knn_clsf.set_params(n_jobs=test_threads)
+
         predict_time, yp = bench.measure_function_time(knn_clsf.predict, X_test,
                                                        params=params)
         y_proba = knn_clsf.predict_proba(X_test)
