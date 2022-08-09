@@ -36,8 +36,7 @@
             "max-leaves": 256,
             "n-estimators": 1000,
             "objective": "binary:logistic",
-            "enable-experimental-json-serialization": "False",
-            "inplace-predict": ""
+            "enable-experimental-json-serialization": "False"
         }
     ]
 }
