@@ -28,6 +28,8 @@ parser.add_argument('--test-size', type=float, default=0.25,
                     help='Size of testing subset')
 parser.add_argument('--do-not-shuffle', default=False, action='store_true',
                     help='Do not perform data shuffle before splitting')
+parser.add_argument('--include-y', default=False, action='store_true',
+                    help='Include label (Y) in splitting')
 params = bench.parse_args(parser)
 
 # Load generated data
@@ -40,7 +42,7 @@ tts_params = {
     'random_state': params.seed
 }
 
-time, _ = bench.measure_function_time(train_test_split, X=X, y=y, params=params)
+time, _ = bench.measure_function_time(train_test_split, X=X, y=None, params=params)
 
 bench.print_output(library='cuml', algorithm='train_test_split',
                    stages=['training'], params=params,

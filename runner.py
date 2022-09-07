@@ -36,6 +36,21 @@ def get_configs(path: Path) -> List[str]:
             result += get_configs(new_path)
     return result
 
+def split_threads(params: Dict[str, Any]):
+    if "num-threads" in params:
+        if type(params["num-threads"]) is list:
+            num_threads = params["num-threads"]
+            params["test-num-threads"] = params["num-threads"] = num_threads[0]
+            th_len = len(num_threads)
+            if th_len > 1:
+                params["test-num-threads"] = num_threads[1]
+        else:
+            params["test-num-threads"] = params["num-threads"]
+
+def set_iterations(params: Dict[str, Any]):
+    if "num-iterations" in params:
+        params["box-filter-measurements"] = params["num-iterations"]
+        del params["num-iterations"]
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -117,9 +132,12 @@ if __name__ == '__main__':
 
         # get parameters that are common for all cases
         common_params = config['common']
+
         for params_set in config['cases']:
             params = common_params.copy()
             params.update(params_set.copy())
+            split_threads(params)
+            set_iterations(params)
 
             if 'workload-size' in params:
                 if params['workload-size'] not in args.workload_size:

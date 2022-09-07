@@ -23,7 +23,9 @@ import re
 
 import numpy as np
 import sklearn
+import daal4py
 
+DEFAULT_NUM_THREADS = daal4py.num_threads()
 
 def get_dtype(data):
     '''
@@ -131,7 +133,10 @@ def parse_args(parser, size=None, loop_types=(),
 
     parser.add_argument('-n', '--num-threads', '--core-number', default=-1,
                         dest='threads', type=int,
-                        help='Number of threads to use')
+                        help='Number of threads to train or test if --test-num-threads is not specified')
+    parser.add_argument('--test-num-threads', '--test-core-number', default=-1,
+                        dest='test_threads', type=int,
+                        help='Number of threads to run test')
     parser.add_argument('-a', '--arch', default='?',
                         help='Machine architecture, for bookkeeping')
     parser.add_argument('-b', '--batch', '--batchID', default='?',
