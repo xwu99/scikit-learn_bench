@@ -23,9 +23,12 @@ import re
 
 import numpy as np
 import sklearn
-import daal4py
 
-DEFAULT_NUM_THREADS = daal4py.num_threads()
+try:
+    import daal4py
+    DEFAULT_NUM_THREADS = daal4py.num_threads()
+except ImportError:
+    DEFAULT_NUM_THREADS = -1
 
 def get_dtype(data):
     '''
