@@ -120,7 +120,8 @@ xgb_params = {
     'seed': params.seed,
     'single_precision_histogram': params.single_precision_histogram,
     'enable_experimental_json_serialization':
-        params.enable_experimental_json_serialization
+        params.enable_experimental_json_serialization,
+    'n_estimators': params.n_estimators
 }
 
 if params.threads != -1:
