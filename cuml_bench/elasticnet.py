@@ -39,7 +39,7 @@ params = bench.parse_args(parser)
 X_train, X_test, y_train, y_test = bench.load_data(params)
 
 # Create our regression object
-regr = ElasticNet(fit_intercept=False, l1_ratio=params.l1_ratio,
+regr = ElasticNet(fit_intercept=params.fit_intercept, l1_ratio=params.l1_ratio,
                   alpha=params.alpha, tol=params.tol, max_iter=params.maxiter)
 
 # Time fit
