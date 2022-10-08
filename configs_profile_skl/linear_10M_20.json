@@ -1,0 +1,30 @@
+{
+    "common": {
+        "lib": "sklearn",
+        "data-format": "pandas",
+        "data-order": "F",
+        "dtype": "float64",
+        "num-threads": -1,
+	    "num-iterations": 2000,
+        "time-limit": 120
+    },
+    "cases": [
+        {
+            "algorithm": "linear",
+            "data-format": "numpy",
+            "data-order": "C",
+	        "num-iterations": 20000,
+            "dataset": [
+                {
+                    "source": "synthetic",
+                    "type": "regression",
+                    "n_features": 20,
+                    "training": {
+                        "n_samples": 10000000
+                    }
+                }
+            ]
+        }
+    ]
+}
+

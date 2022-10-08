@@ -1,7 +1,6 @@
-source /home/xiaochang/miniconda3/bin/activate xgb15-conda-default
+source /home/xiaochang/miniconda3/bin/activate xgb15_conda_default
 
-CONFIG_FILES=configs_profile/xgb_airline-ohe_numpy_C.json
-# CONFIG_FILES=configs_profile/xgb_airline-ohe_pandas_F.json
+CONFIG_FILES=configs_profile_skl/linear_10M_20.json
 
 BASE_NAME=$(basename -s .json $CONFIG_FILES)_${CONDA_DEFAULT_ENV}
 TIMESTAMP=$(date +%m%d_%H%M%S)
