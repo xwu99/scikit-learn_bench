@@ -18,7 +18,7 @@ import argparse
 
 import bench
 from cuml.svm import SVC
-
+import numpy as np
 
 parser = argparse.ArgumentParser(description='cuML SVM benchmark')
 
@@ -51,7 +51,9 @@ params.n_classes = y_train[y_train.columns[0]].nunique()
 
 clf = SVC(C=params.C, kernel=params.kernel, cache_size=params.cache_size_mb,
           tol=params.tol, gamma=params.gamma, probability=params.probability,
-          degree=params.degree)
+          degree=params.degree, output_type='numpy')
+X_train = X_train.to_cupy()
+y_train = y_train.to_cupy()
 
 fit_time, _ = bench.measure_function_time(clf.fit, X_train, y_train, params=params)
 
@@ -73,6 +75,7 @@ else:
 
 predict_train_time, y_pred = bench.measure_function_time(
     clf_predict, X_train, params=params)
+y_train = y_train.get()
 train_acc = metric_call(y_train, y_pred)
 
 predict_test_time, y_pred = bench.measure_function_time(
