@@ -5,15 +5,14 @@
         "data-order": "F",
         "dtype": "float64",
         "num-threads": -1,
-	    "num-iterations": 2000,
-        "time-limit": 120
+	    "num-iterations": 20000,
+        "time-limit": 10
     },
     "cases": [
         {
             "algorithm": "linear",
             "data-format": "numpy",
             "data-order": "C",
-	        "num-iterations": 20000,
             "dataset": [
                 {
                     "source": "synthetic",
