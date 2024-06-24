@@ -19,6 +19,7 @@ import argparse
 import bench
 import numpy as np
 import xgboost as xgb
+import timeit
 
 
 def convert_probs_to_classes(y_prob):
@@ -88,8 +89,15 @@ params = bench.parse_args(parser)
 if params.seed == 12345:
     params.seed = 0
 
+print(f"Running {params.dataset_name} with XGBoost {xgb.__version__} using {params.threads} threads")
+
+t0 = timeit.default_timer()
 # Load and convert data
 X_train, X_test, y_train, y_test = bench.load_data(params)
+t1 = timeit.default_timer()
+print("Loading and converting data took " + str(t1 - t0) + " secs")
+
+n_classes = len(np.unique(y_train))
 
 xgb_params = {
     'booster': 'gbtree',
@@ -143,12 +151,8 @@ else:
 dtrain = xgb.DMatrix(X_train, y_train)
 dtest = xgb.DMatrix(X_test, y_test)
 
-
-def fit(dmatrix):
-    if dmatrix is None:
-        dmatrix = xgb.DMatrix(X_train, y_train)
-    return xgb.train(xgb_params, dmatrix, params.n_estimators)
-
+booster = xgb.Booster()
+booster.load_model((f"xgb-{params.dataset_name}-model.json"))
 
 if params.inplace_predict:
     def predict(*args):
@@ -160,25 +164,38 @@ else:
             dmatrix = xgb.DMatrix(X_test, y_test)
         return booster.predict(dmatrix)
 
-params.box_filter_measurements=10
-params.time_limit=60000
-fit_time, booster = bench.measure_function_time(
-    fit, None if params.count_dmatrix else dtrain, params=params)
-train_metric = metric_func(
-    convert_xgb_predictions(
-        booster.predict(dtrain),
-        params.objective),
-    y_train)
+def predict_onedal(*args):
+    import daal4py as d4p
+
+    t0 = timeit.default_timer()
+
+    # Conversion to daal4py
+    daal_model = d4p.get_gbt_model_from_xgboost(booster)
+
+    t1 = timeit.default_timer()
+    # print(f"--- Convert to oneDAL GBT model took {t1-t0:.3f} secs")
+
+    t0 = timeit.default_timer()
+    daal_predict_algo = d4p.gbt_classification_prediction(
+        nClasses = n_classes,
+        resultsToEvaluate="computeClassLabels|computeClassProbabilities",
+        fptype='float'
+    )
+    daal_prediction = daal_predict_algo.compute(X_test, daal_model)
+    t1 = timeit.default_timer()
+    # print(f"--- Predict with oneDAL GBT model took {t1-t0:.3f} secs")
+    return (daal_prediction.probabilities[:,1], np.ravel(daal_prediction.prediction))
 
 params.box_filter_measurements=10
 params.time_limit=60000
 predict_time, y_pred = bench.measure_function_time(
     predict, None if params.inplace_predict or params.count_dmatrix else dtest, params=params)
-test_metric = metric_func(convert_xgb_predictions(y_pred, params.objective), y_test)
+# test_metric = metric_func(convert_xgb_predictions(y_pred, params.objective), y_test)
+print(f"{params.dataset_name} vanilla predict time: {predict_time:.3f} secs")
 
-bench.print_output(library='xgboost', algorithm=f'gradient_boosted_trees_{task}',
-                   stages=['training', 'prediction'],
-                   params=params, functions=['gbt.fit', 'gbt.predict'],
-                   times=[fit_time, predict_time], metric_type=metric_name,
-                   metrics=[train_metric, test_metric], data=[X_train, X_test],
-                   alg_instance=booster, alg_params=xgb_params)
+params.box_filter_measurements=10
+params.time_limit=60000
+predict_time, y_pred = bench.measure_function_time(
+    predict_onedal, None if params.inplace_predict or params.count_dmatrix else dtest, params=params)
+# test_metric = metric_func(convert_xgb_predictions(y_pred, params.objective), y_test)
+print(f"{params.dataset_name} oneDAL GBT predict time: {predict_time:.3f} secs")
